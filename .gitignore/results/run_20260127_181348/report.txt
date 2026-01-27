@@ -1,0 +1,21 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260127_181348
+----------------------------------------
+NAJLEPŠIA ALOKÁCIA:
+BTC-USD     : 4.87%
+GLD         : 25.96%
+QQQ         : 12.88%
+SPY         : 16.91%
+TIP         : 31.78%
+TLT         : 2.76%
+VGK         : 2.13%
+VNQ         : 2.70%
+----------------------------------------
+Očakávaný výnos: 12.99%
+Max Drawdown:    -21.70%
+Sortino Ratio:   1.48
+Downside Risk:   7.41%
+----------------------------------------
+TESTOVANÉ AKTÍVA: BTC-USD, GLD, QQQ, SPY, TIP, TLT, VGK, VNQ
+PRIEMERNÁ KORELÁCIA: 0.25
+========================================

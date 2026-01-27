@@ -1,0 +1,17 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260127_172908
+----------------------------------------
+NAJLEPŠIA ALOKÁCIA:
+GC=F        : 44.87%
+QQQ         : 3.48%
+SPY         : 23.86%
+TLT         : 27.78%
+----------------------------------------
+Očakávaný výnos: 10.98%
+Max Drawdown:    -20.98%
+Sortino Ratio:   1.22
+Downside Risk:   7.34%
+----------------------------------------
+TESTOVANÉ AKTÍVA: GC=F, QQQ, SPY, TLT
+PRIEMERNÁ KORELÁCIA: 0.08
+========================================
