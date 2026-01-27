@@ -1,7 +1,7 @@
 # --- NASTAVENIA PORTFÓLIA ---
 
 # Zoznam tickerov z Yahoo Finance (tvoj mix z predošlých testov)
-TICKERS = ['SPY', 'QQQ', 'GLD', 'TLT', 'VGK', 'BTC-USD', 'VNQ', 'TIP']
+TICKERS = ['SPY', 'BTC-USD', 'QQQ', '^STOXX50E', 'EGLN.L']
 
 # Počiatočný dátum pre sťahovanie dát
 START_DATE = "2000-01-01"
@@ -16,7 +16,7 @@ RISK_FREE_RATE = 0.02
 DEFAULT_SEED = 42
 
 # 1. Nastav si svoju hranicu bolesti (napr. -15%)
-MAX_ALLOWED_DRAWDOWN = -0.25
+MAX_ALLOWED_DRAWDOWN = -0.40
 
 # --- CESTY K SÚBOROM ---
 

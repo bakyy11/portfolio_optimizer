@@ -1,3 +1,4 @@
+import yfinance as yf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,27 +6,25 @@ import seaborn as sns
 from datetime import datetime
 from .settings import MAX_ALLOWED_DRAWDOWN
 
-def check_constraints(weights, tickers):
-    w = dict(zip(tickers, weights))
+# def check_constraints(weights, tickers):
+#     w = dict(zip(tickers, weights))
     
-    # PRAVIDLO 1: Bitcoin (Max 5%)
-    if w.get('BTC-USD', 0) > 0.05:
-        return False
+#     # PRAVIDLO 1: Bitcoin (Max 5%)
+#     if w.get('BTC-USD', 0) > 0.05:
+#         return False
         
-    # PRAVIDLO 2: S&P 500 (Min 15%, Max 35%)
-    if not (0.15 <= w.get('SPY', 0) <= 0.35):
-        return False
+#     # 1. MOTOR: SPY + QQQ musí tvoriť aspoň polovicu portfólia
+#     if (w.get('SPY', 0) + w.get('QQQ', 0)) < 0.50:
+#         return False
+
+#     # 2. LIMIT TECH: QQQ môže ísť až na 30% (predtým 20%)
+#     if w.get('QQQ', 0) > 0.30:
+#         return False
         
-    # PRAVIDLO 3: Technológie (Max 20%)
-    if w.get('QQQ', 0) > 0.20:
-        return False
+#     if (w.get('GLD', 0) + w.get('TLT', 0)) < 0.25:
+#         return False
         
-    # PRAVIDLO 4: Zlato + Dlhopisy spolu aspoň 20%
-    safety_sum = w.get('GLD', 0) + w.get('TLT', 0)
-    if safety_sum < 0.20:
-        return False
-        
-    return True
+#     return True
 
 def run_simulation(returns, num_sim, seed, risk_free_rate):
     np.random.seed(seed)
@@ -40,8 +39,8 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
         weights = np.random.random(len(tickers))
         weights /= np.sum(weights)
 
-        if not check_constraints(weights, tickers):
-            continue  # Ak nespĺňa limity, tento pokus zahodíme a ideme na ďalší
+        # if not check_constraints(weights, tickers):
+        #     continue  # Ak nespĺňa limity, tento pokus zahodíme a ideme na ďalší
 
         weights_record.append(weights)
 
@@ -70,9 +69,7 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
     # Analýza výsledkov
     columns = ['Return', 'DownsideRisk', 'TotalRisk', 'Sortino', 'Sharpe', 'MaxDD', 'Calmar']
     df = pd.DataFrame(results, columns=columns)
-    
-    # 1. Nastav si svoju hranicu bolesti (napr. -15%)
-    #MAX_ALLOWED_DRAWDOWN = -0.25 
+
 
     # 2. Vyfiltruj len portfóliá, ktoré spĺňajú podmienku
     filtered_df = df[df['MaxDD'] >= MAX_ALLOWED_DRAWDOWN]

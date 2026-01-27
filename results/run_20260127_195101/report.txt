@@ -1,0 +1,15 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260127_195101
+----------------------------------------
+NAJLEPŠIA ALOKÁCIA:
+BTC-USD     : 17.22%
+SPY         : 82.78%
+----------------------------------------
+Očakávaný výnos: 19.15%
+Max Drawdown:    -33.68%
+Sortino Ratio:   1.18
+Downside Risk:   14.49%
+----------------------------------------
+TESTOVANÉ AKTÍVA: BTC-USD, SPY
+PRIEMERNÁ KORELÁCIA: 0.37
+========================================

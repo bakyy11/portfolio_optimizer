@@ -1,0 +1,18 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260127_200433
+----------------------------------------
+NAJLEPŠIA ALOKÁCIA:
+BTC-USD     : 15.75%
+EGLN.L      : 50.09%
+QQQ         : 30.55%
+SPY         : 1.71%
+^STOXX50E   : 1.90%
+----------------------------------------
+Očakávaný výnos: 24.11%
+Max Drawdown:    -24.95%
+Sortino Ratio:   1.76
+Downside Risk:   12.59%
+----------------------------------------
+TESTOVANÉ AKTÍVA: BTC-USD, EGLN.L, QQQ, SPY, ^STOXX50E
+PRIEMERNÁ KORELÁCIA: 0.25
+========================================
