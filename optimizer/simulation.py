@@ -99,7 +99,7 @@ def save_results(df, best_portfolio, returns):
         f.write("=== MONTE CARLO OPTIMIZATION REPORT ===\n")
         f.write(f"Timestamp: {timestamp}\n")
         f.write("-" * 40 + "\n")
-        f.write("THE BEST ALLOCATION:\n")
+        f.write(f"THE BEST ALLOCATION ({METRIC}):\n")
         for ticker, weight in best_portfolio['weights'].items():
             f.write(f"{ticker:12}: {weight:.2%}\n")
         f.write("-" * 40 + "\n")
@@ -113,9 +113,6 @@ def save_results(df, best_portfolio, returns):
         f.write("-" * 40 + "\n")
         # 1. List of tested assets
         f.write(f"TESTED ASSETS: {', '.join(returns.columns.tolist())}\n")
-        
-        # 2. Average correlation
-        f.write(f"AVERAGE CORRELATION: {best_portfolio['avg_corr']:.2f}\n")
         f.write("="*40 + "\n")
 
     # 3. GRAPH: Efficient Frontier
@@ -124,6 +121,8 @@ def save_results(df, best_portfolio, returns):
     plt.colorbar(label='Sortino Ratio')
     plt.scatter(best_portfolio['downside_risk'], best_portfolio['return'], color='red', marker='.', s=200)
     plt.title(f'Efficient Frontier (Run: {timestamp})')
+    plt.xlabel('Downside Risk (Std Dev)')
+    plt.ylabel('Expected Annual Return')
     plt.savefig(f"{run_folder}/efficient_frontier.png")
     plt.close()
 
@@ -137,8 +136,11 @@ def save_results(df, best_portfolio, returns):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     ax1.plot(cumulative.index, cumulative, color='#40eb34')
     ax1.set_title(f'Equity Curve - Return: {best_portfolio["return"]:.2%}')
+    ax1.set_ylabel('Cumulative Return (Multiple)')
     ax2.fill_between(drawdown.index, drawdown, 0, color='red', alpha=0.3)
     ax2.set_title(f'Underwater Chart - MaxDD: {best_portfolio["max_drawdown"]:.2%}')
+    ax2.set_ylabel('Drawdown')
+    ax2.set_xlabel('Year')
     
     plt.savefig(f"{run_folder}/performance_summary.png")
     plt.close()
