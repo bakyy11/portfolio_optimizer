@@ -18,7 +18,7 @@ A portfolio optimization tool designed to find the "Sweet Spot" between high ret
 - `requirements.txt` - Required Python libraries.
 
 ## 📈 Sample Allocation (Optimized)
-///
+
 
 ## 🔧 Installation & Usage
 1. Clone the repo:
