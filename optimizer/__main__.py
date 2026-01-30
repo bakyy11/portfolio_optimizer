@@ -1,7 +1,7 @@
 import argparse 
 import sys 
 from .project import get_data 
-from .settings import TICKERS, RISK_FREE_RATE, DEFAULT_SEED, MAX_ALLOWED_DRAWDOWN
+from .settings import TICKERS, RISK_FREE_RATE, DEFAULT_SEED, MAX_ALLOWED_DRAWDOWN, METRIC
 from .simulation import run_simulation
 
 def main():
@@ -31,18 +31,19 @@ def main():
 
     # 4. Output 
     print("\n" + "="*30)
-    print("BEST PORTFOLIO (SORTINO)")
+    print(f"BEST PORTFOLIO ({METRIC})")
     print("="*30)
     for ticker, weight in best_portfolio['weights'].items():
         print(f"{ticker:10}: {weight:.2%}")
     
     print("-" * 30)
-    print(f"Expected Return: {best_portfolio['return']:.2%}")
+    print(f"Expected Annual Return: {best_portfolio['return']:.2%}")
     print(f"Downside Risk:   {best_portfolio['downside_risk']:.2%}")
     print(f"Max Drawdown:    {best_portfolio['max_drawdown']:.2%}")
     print(f"Sortino Ratio:   {best_portfolio['sortino']:.2f}")
     print(f"Sharpe Ratio:    {best_portfolio['sharpe']:.2f}")
     print(f"Calmar Ratio:    {best_portfolio['calmar']:.2f}")
+    print(f"Avg. Correlation {best_portfolio['avg_corr']:.2f}")
     print("="*30)
 
     # 5. Calling graphs (if is used --plot)

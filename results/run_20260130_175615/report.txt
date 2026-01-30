@@ -1,0 +1,20 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260130_175615
+----------------------------------------
+THE BEST ALLOCATION:
+EGLN.L      : 31.72%
+SPY         : 30.38%
+SXRS.DE     : 0.69%
+TLT         : 21.51%
+VCOBX       : 15.70%
+----------------------------------------
+Expected Return: 11.74%
+Max Drawdown:    -16.05%
+Downside Risk:   6.25%
+Sortino Ratio:   1.56
+Sharpe Ratio:    1.14
+Calmar Ratio:    0.73
+----------------------------------------
+TESTED ASSETS: EGLN.L, SPY, SXRS.DE, TLT, VCOBX
+AVERAGE CORRELATION: 0.13
+========================================

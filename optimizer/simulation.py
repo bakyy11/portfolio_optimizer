@@ -4,8 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
-from .settings import MAX_ALLOWED_DRAWDOWN
-from .settings import check_constraints
+from .settings import MAX_ALLOWED_DRAWDOWN, METRIC, check_constraints
 
 def run_simulation(returns, num_sim, seed, risk_free_rate):
     np.random.seed(seed)
@@ -45,10 +44,13 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
         max_dd = drawdown_series.min()
         calmar = ann_return / abs(max_dd) if max_dd != 0 else 0
 
-        results.append([ann_return, downside_std, total_std, sortino, sharpe, max_dd, calmar])
+        # 6. Correlation
+        avg_corr = returns.corr().values[np.triu_indices_from(returns.corr(), k=1)].mean()
+
+        results.append([ann_return, downside_std, total_std, sortino, sharpe, max_dd, calmar, avg_corr])
 
     # Analyze results
-    columns = ['Return', 'DownsideRisk', 'TotalRisk', 'Sortino', 'Sharpe', 'MaxDD', 'Calmar']
+    columns = ['Return', 'DownsideRisk', 'TotalRisk', 'Sortino', 'Sharpe', 'MaxDD', 'Calmar', 'Correlation']
     df = pd.DataFrame(results, columns=columns)
 
 
@@ -57,8 +59,8 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
 
     # 3. Choose the best portfolio
     if not filtered_df.empty:
-        # If exists portfolios within the drawdown limit, pick the best Sortino
-        best_idx = filtered_df['Sortino'].idxmax()
+        # If exists portfolios within the drawdown limit, pick the best Return
+        best_idx = filtered_df[METRIC].idxmax()
         print(f"The best portfolio within drawdown limit {MAX_ALLOWED_DRAWDOWN:.0%}")
     else:
         # If none, pick the one with the least drawdown
@@ -74,6 +76,7 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
         'max_drawdown': df.loc[best_idx, 'MaxDD'],
         'sharpe': df.loc[best_idx, 'Sharpe'],
         'calmar': df.loc[best_idx, 'Calmar'],
+        'avg_corr': df.loc[best_idx, 'Correlation'],
         'idx': best_idx
     }
 
@@ -100,19 +103,19 @@ def save_results(df, best_portfolio, returns):
         for ticker, weight in best_portfolio['weights'].items():
             f.write(f"{ticker:12}: {weight:.2%}\n")
         f.write("-" * 40 + "\n")
-        f.write(f"Expected Return: {best_portfolio['return']:.2%}\n")
+        f.write(f"Expected Annual Return: {best_portfolio['return']:.2%}\n")
         f.write(f"Max Drawdown:    {best_portfolio['max_drawdown']:.2%}\n")
         f.write(f"Downside Risk:   {best_portfolio['downside_risk']:.2%}\n")
         f.write(f"Sortino Ratio:   {best_portfolio['sortino']:.2f}\n")
         f.write(f"Sharpe Ratio:    {best_portfolio['sharpe']:.2f}\n")
         f.write(f"Calmar Ratio:    {best_portfolio['calmar']:.2f}\n")
+        f.write(f"Avg. Correlation {best_portfolio['avg_corr']:.2f}\n")
         f.write("-" * 40 + "\n")
         # 1. List of tested assets
         f.write(f"TESTED ASSETS: {', '.join(returns.columns.tolist())}\n")
         
-        # 2. Calculation of average correlation
-        avg_corr = returns.corr().values[np.triu_indices_from(returns.corr(), k=1)].mean()
-        f.write(f"AVERAGE CORRELATION: {avg_corr:.2f}\n")
+        # 2. Average correlation
+        f.write(f"AVERAGE CORRELATION: {best_portfolio['avg_corr']:.2f}\n")
         f.write("="*40 + "\n")
 
     # 3. GRAPH: Efficient Frontier
@@ -132,7 +135,7 @@ def save_results(df, best_portfolio, returns):
     drawdown = (cumulative - running_max) / running_max
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
-    ax1.plot(cumulative.index, cumulative, color='green')
+    ax1.plot(cumulative.index, cumulative, color='#40eb34')
     ax1.set_title(f'Equity Curve - Return: {best_portfolio["return"]:.2%}')
     ax2.fill_between(drawdown.index, drawdown, 0, color='red', alpha=0.3)
     ax2.set_title(f'Underwater Chart - MaxDD: {best_portfolio["max_drawdown"]:.2%}')

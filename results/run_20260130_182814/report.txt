@@ -1,0 +1,20 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260130_182814
+----------------------------------------
+THE BEST ALLOCATION:
+GLD         : 18.78%
+GSG         : 6.63%
+QQQ         : 29.99%
+SPY         : 10.74%
+TLT         : 33.86%
+----------------------------------------
+Expected Annual Return: 10.49%
+Max Drawdown:    -24.89%
+Downside Risk:   7.51%
+Sortino Ratio:   1.13
+Sharpe Ratio:    0.83
+Calmar Ratio:    0.42
+----------------------------------------
+TESTED ASSETS: GLD, GSG, QQQ, SPY, TLT
+AVERAGE CORRELATION: 0.14
+========================================

@@ -1,30 +1,34 @@
 # --- SETTINGS OF PORTFOLIO ---
 
 # List of tickers from Yahoo Finance 
-TICKERS = ['SPY', 'BTC-USD', 'QQQ', '^STOXX50E', 'EGLN.L']
+TICKERS = ['SPY', 'QQQ', 'TLT', 'GLD', 'GSG', 'BTC-USD']
 
 # Start date for data retrieval (YYYY-MM-DD)
 START_DATE = "2000-01-01"
+
+# Based on what choose best portfolio
+METRIC = 'Sortino'  # Options: 'Return', 'Sortino', 'Sharpe', 'Calmar', 'MaxDD', 'TotalRisk', 'DownsideRisk'
 
 # Function to check portfolio constraints
 def check_constraints(weights, tickers):
     w = dict(zip(tickers, weights))
     
-    # RULE 1: Bitcoin (Max 5%)
-    if w.get('BTC-USD', 0) > 0.05:
-        return False
-        
-    # 1. ENGINE: SPY + QQQ at least 50%
-    if (w.get('SPY', 0) + w.get('QQQ', 0)) < 0.50:
-        return False
+    # Stocks 40%, max 60%
+    equity_sum = w.get('SPY', 0) + w.get('QQQ', 0)
+    if equity_sum < 0.40 or equity_sum > 0.60: return False
 
-    # 2. LIMIT TECH: QQQ up to 30% 
-    if w.get('QQQ', 0) > 0.30:
-        return False
-    # 3. STABILITY: GLD + TLT at least 25%    
-    if (w.get('GLD', 0) + w.get('TLT', 0)) < 0.25:
-        return False
-        
+    # Gold
+    if w.get('GLD', 0) > 0.15: return False
+    
+    # Bonds at least 15%, hedge
+    if w.get('TLT', 0) < 0.15: return False
+
+    # Bitcoin fix 5% (allowed spread 6-8%)
+    if not (0.06 <= w.get('BTC-USD', 0) <= 0.08): return False
+
+    # Commodities at least 5%
+    if w.get('GSG', 0) < 0.05: return False
+
     return True
 
     
@@ -39,7 +43,7 @@ RISK_FREE_RATE = 0.02
 DEFAULT_SEED = 42
 
 # Set your maximum allowed drawdown (eg. -40% = -0.40)
-MAX_ALLOWED_DRAWDOWN = -0.40
+MAX_ALLOWED_DRAWDOWN = -0.25
 
 # --- FILES ---
 

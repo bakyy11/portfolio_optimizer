@@ -1,0 +1,21 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260130_181906
+----------------------------------------
+THE BEST ALLOCATION:
+BTC-USD     : 5.74%
+EGLN.L      : 14.36%
+QQQ         : 29.57%
+SPY         : 11.10%
+SXRS.DE     : 23.46%
+TLT         : 15.76%
+----------------------------------------
+Expected Return: 15.80%
+Max Drawdown:    -19.95%
+Downside Risk:   9.95%
+Sortino Ratio:   1.39
+Sharpe Ratio:    1.11
+Calmar Ratio:    0.79
+----------------------------------------
+TESTED ASSETS: BTC-USD, EGLN.L, QQQ, SPY, SXRS.DE, TLT
+AVERAGE CORRELATION: 0.14
+========================================

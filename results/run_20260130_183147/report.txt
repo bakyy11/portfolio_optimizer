@@ -1,0 +1,21 @@
+=== MONTE CARLO OPTIMIZATION REPORT ===
+Timestamp: 20260130_183147
+----------------------------------------
+THE BEST ALLOCATION:
+BTC-USD     : 5.86%
+GLD         : 16.90%
+GSG         : 7.77%
+QQQ         : 12.91%
+SPY         : 34.14%
+TLT         : 22.42%
+----------------------------------------
+Expected Annual Return: 13.95%
+Max Drawdown:    -24.77%
+Downside Risk:   9.17%
+Sortino Ratio:   1.30
+Sharpe Ratio:    1.03
+Calmar Ratio:    0.56
+----------------------------------------
+TESTED ASSETS: BTC-USD, GLD, GSG, QQQ, SPY, TLT
+AVERAGE CORRELATION: 0.14
+========================================
