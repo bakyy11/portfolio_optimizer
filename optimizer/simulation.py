@@ -5,26 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 from .settings import MAX_ALLOWED_DRAWDOWN
-
-# def check_constraints(weights, tickers):
-#     w = dict(zip(tickers, weights))
-    
-#     # PRAVIDLO 1: Bitcoin (Max 5%)
-#     if w.get('BTC-USD', 0) > 0.05:
-#         return False
-        
-#     # 1. MOTOR: SPY + QQQ musí tvoriť aspoň polovicu portfólia
-#     if (w.get('SPY', 0) + w.get('QQQ', 0)) < 0.50:
-#         return False
-
-#     # 2. LIMIT TECH: QQQ môže ísť až na 30% (predtým 20%)
-#     if w.get('QQQ', 0) > 0.30:
-#         return False
-        
-#     if (w.get('GLD', 0) + w.get('TLT', 0)) < 0.25:
-#         return False
-        
-#     return True
+from .settings import check_constraints
 
 def run_simulation(returns, num_sim, seed, risk_free_rate):
     np.random.seed(seed)
@@ -35,16 +16,16 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
     weights_record = []
 
     for i in range(num_sim):
-        # 1. Náhodné váhy
+        # 1. Random weights
         weights = np.random.random(len(tickers))
         weights /= np.sum(weights)
 
-        # if not check_constraints(weights, tickers):
-        #     continue  # Ak nespĺňa limity, tento pokus zahodíme a ideme na ďalší
+        if not check_constraints(weights, tickers):
+            continue # Skip portfolios that don't meet constraints
 
         weights_record.append(weights)
 
-        # 2. Výnosy portfólia
+        # 2. Portfolio returns
         p_returns = returns.dot(weights)
         ann_return = p_returns.mean() * 252
 
@@ -66,25 +47,25 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
 
         results.append([ann_return, downside_std, total_std, sortino, sharpe, max_dd, calmar])
 
-    # Analýza výsledkov
+    # Analyze results
     columns = ['Return', 'DownsideRisk', 'TotalRisk', 'Sortino', 'Sharpe', 'MaxDD', 'Calmar']
     df = pd.DataFrame(results, columns=columns)
 
 
-    # 2. Vyfiltruj len portfóliá, ktoré spĺňajú podmienku
+    # 2. Filter portfolios by MAX_ALLOWED_DRAWDOWN
     filtered_df = df[df['MaxDD'] >= MAX_ALLOWED_DRAWDOWN]
 
-    # 3. Vyber najlepšie z nich (podľa Sortina alebo Výnosu)
+    # 3. Choose the best portfolio
     if not filtered_df.empty:
-        # Ak existujú portfóliá pod 15% drawdown, zober to s najlepším Sortinom
+        # If exists portfolios within the drawdown limit, pick the best Sortino
         best_idx = filtered_df['Sortino'].idxmax()
-        print(f"Nájdené portfólio spĺňajúce limit Drawdown {MAX_ALLOWED_DRAWDOWN:.0%}")
+        print(f"The best portfolio within drawdown limit {MAX_ALLOWED_DRAWDOWN:.0%}")
     else:
-        # Ak si v 100k simuláciách nenašiel nič také bezpečné, zober aspoň to najmenej rizikové
+        # If none, pick the one with the least drawdown
         best_idx = df['MaxDD'].idxmax()
-        print(f"VAROVANIE: Žiadne portfólio nespĺňa limit {MAX_ALLOWED_DRAWDOWN:.0%}. Vyberám najbezpečnejšie možné.")
+        print(f"WARNING: There is no portfolio within drawdown limit {MAX_ALLOWED_DRAWDOWN:.0%}. Choosing the safest portfolio.")
     
-    # Príprava balíčka s najlepším portfóliom
+    # Prepare best portfolio details
     best_portfolio = {
         'weights': dict(zip(tickers, weights_record[best_idx])),
         'return': df.loc[best_idx, 'Return'],
@@ -99,50 +80,51 @@ def run_simulation(returns, num_sim, seed, risk_free_rate):
     return best_portfolio, df
 
 def save_results(df, best_portfolio, returns):
-    """Vytvorí samostatný priečinok pre tento run a uloží grafy aj report."""
     from .settings import OUTPUT_DIR
     import os
     
-    # 1. Príprava priečinkov
+    # 1. Preparing output folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_folder = f"{OUTPUT_DIR}/run_{timestamp}"
     
     if not os.path.exists(run_folder):
         os.makedirs(run_folder)
 
-    # 2. Uloženie TEXTOVÉHO REPORTU
+    # 2. Saving text report
     report_path = f"{run_folder}/report.txt"
     with open(report_path, "w") as f:
         f.write("=== MONTE CARLO OPTIMIZATION REPORT ===\n")
         f.write(f"Timestamp: {timestamp}\n")
         f.write("-" * 40 + "\n")
-        f.write("NAJLEPŠIA ALOKÁCIA:\n")
+        f.write("THE BEST ALLOCATION:\n")
         for ticker, weight in best_portfolio['weights'].items():
             f.write(f"{ticker:12}: {weight:.2%}\n")
         f.write("-" * 40 + "\n")
-        f.write(f"Očakávaný výnos: {best_portfolio['return']:.2%}\n")
+        f.write(f"Expected Return: {best_portfolio['return']:.2%}\n")
         f.write(f"Max Drawdown:    {best_portfolio['max_drawdown']:.2%}\n")
-        f.write(f"Sortino Ratio:   {best_portfolio['sortino']:.2f}\n")
         f.write(f"Downside Risk:   {best_portfolio['downside_risk']:.2%}\n")
+        f.write(f"Sortino Ratio:   {best_portfolio['sortino']:.2f}\n")
+        f.write(f"Sharpe Ratio:    {best_portfolio['sharpe']:.2f}\n")
+        f.write(f"Calmar Ratio:    {best_portfolio['calmar']:.2f}\n")
         f.write("-" * 40 + "\n")
-        # 1. Zoznam tickerov (aby si vedel, čo si v ten deň testoval)
-        f.write(f"TESTOVANÉ AKTÍVA: {', '.join(returns.columns.tolist())}\n")
+        # 1. List of tested assets
+        f.write(f"TESTED ASSETS: {', '.join(returns.columns.tolist())}\n")
         
-        # 2. Výpočet a zápis priemernej korelácie (dôkaz diverzifikácie)
+        # 2. Calculation of average correlation
         avg_corr = returns.corr().values[np.triu_indices_from(returns.corr(), k=1)].mean()
-        f.write(f"PRIEMERNÁ KORELÁCIA: {avg_corr:.2f}\n")
+        f.write(f"AVERAGE CORRELATION: {avg_corr:.2f}\n")
         f.write("="*40 + "\n")
 
-    # 3. GRAF: Efficient Frontier
+    # 3. GRAPH: Efficient Frontier
     plt.figure(figsize=(10, 6))
     plt.scatter(df['TotalRisk'], df['Return'], c=df['Sortino'], cmap='viridis', s=10, alpha=0.3)
     plt.colorbar(label='Sortino Ratio')
-    plt.scatter(best_portfolio['downside_risk'], best_portfolio['return'], color='red', marker='*', s=200)
+    plt.scatter(best_portfolio['downside_risk'], best_portfolio['return'], color='red', marker='.', s=200)
     plt.title(f'Efficient Frontier (Run: {timestamp})')
     plt.savefig(f"{run_folder}/efficient_frontier.png")
     plt.close()
 
-    # 4. GRAF: Equity & Drawdown
+    # 4. GRAPH: Equity & Drawdown
     best_weights = np.array(list(best_portfolio['weights'].values()))
     p_returns = returns.dot(best_weights)
     cumulative = (1 + p_returns).cumprod()
@@ -158,4 +140,4 @@ def save_results(df, best_portfolio, returns):
     plt.savefig(f"{run_folder}/performance_summary.png")
     plt.close()
     
-    print(f"✅ Všetky dáta a grafy boli uložené do: {run_folder}")
+    print(f"✅ All data and graphs saved to: {run_folder}")

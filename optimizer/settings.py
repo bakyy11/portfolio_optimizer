@@ -1,24 +1,47 @@
-# --- NASTAVENIA PORTFÓLIA ---
+# --- SETTINGS OF PORTFOLIO ---
 
-# Zoznam tickerov z Yahoo Finance (tvoj mix z predošlých testov)
+# List of tickers from Yahoo Finance 
 TICKERS = ['SPY', 'BTC-USD', 'QQQ', '^STOXX50E', 'EGLN.L']
 
-# Počiatočný dátum pre sťahovanie dát
+# Start date for data retrieval (YYYY-MM-DD)
 START_DATE = "2000-01-01"
 
-# --- MATEMATICKÉ KONŠTANTY ---
+# Function to check portfolio constraints
+def check_constraints(weights, tickers):
+    w = dict(zip(tickers, weights))
+    
+    # RULE 1: Bitcoin (Max 5%)
+    if w.get('BTC-USD', 0) > 0.05:
+        return False
+        
+    # 1. ENGINE: SPY + QQQ at least 50%
+    if (w.get('SPY', 0) + w.get('QQQ', 0)) < 0.50:
+        return False
 
-# Ročná bezriziková miera (napr. 2% = 0.02)
-# Používa sa pre výpočet Sharpe a Sortino Ratio
+    # 2. LIMIT TECH: QQQ up to 30% 
+    if w.get('QQQ', 0) > 0.30:
+        return False
+    # 3. STABILITY: GLD + TLT at least 25%    
+    if (w.get('GLD', 0) + w.get('TLT', 0)) < 0.25:
+        return False
+        
+    return True
+
+    
+
+# --- MATHEMATICS CONSTANTS ---
+
+# Annual risk free rate (eg. 2% = 0.02)
+# To calculate Sharpe a Sortino Ratio
 RISK_FREE_RATE = 0.02
 
-# Predvolený seed pre numpy, aby boli výsledky reprodukovateľné (ako na image_40d0ab.png)
+# SEED for random number generator
 DEFAULT_SEED = 42
 
-# 1. Nastav si svoju hranicu bolesti (napr. -15%)
+# Set your maximum allowed drawdown (eg. -40% = -0.40)
 MAX_ALLOWED_DRAWDOWN = -0.40
 
-# --- CESTY K SÚBOROM ---
+# --- FILES ---
 
-# Priečinok, kam sa budú ukladať tvoje vizualizácie (podľa vzoru image_40df73.png)
+# Folder to save results
 OUTPUT_DIR = "results"
