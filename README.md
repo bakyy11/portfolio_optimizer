@@ -17,8 +17,6 @@ A portfolio optimization tool designed to find the "Sweet Spot" between high ret
 - `results/` - Automatically generated analysis reports (ignored by Git).
 - `requirements.txt` - Required Python libraries.
 
-## 📈 Sample Allocation (Optimized)
-Our "All-Weather" configuration targets a balanced return of ~14% with controlled volatility, prioritizing assets like Gold, TIPS, and diversified Equities.
 
 ## 🔧 Installation & Usage
 1. Clone the repo:
